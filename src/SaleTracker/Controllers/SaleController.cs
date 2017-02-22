@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using SaleTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace SaleTracker.Controllers
 {
@@ -28,7 +28,7 @@ namespace SaleTracker.Controllers
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _userManager.FindByIdAsync(userId);
-            return View(_db.Sales.Where(x => x.User.Id == currentUser.Id));
+            return Json(_db.Sales.Where(x => x.User.Id == currentUser.Id));
         }
         public IActionResult Create()
         {
@@ -45,5 +45,17 @@ namespace SaleTracker.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        public IActionResult UserSaleList()
+        {
+            var getUserOfSale = _db.Sales.Include(s => s.User);
+            var userSaleList = getUserOfSale.Where(s => s.User.Id == _userManager.GetUserId(HttpContext.User));
+            return Json(userSaleList);
+        }
+
+        //public IActionResult Index()
+        //{
+        //    return Content;
+        //}
     }
 }
