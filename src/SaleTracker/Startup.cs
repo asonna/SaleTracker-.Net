@@ -50,6 +50,7 @@ namespace SaleTracker
             }
 
             app.UseIdentity();
+            app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
