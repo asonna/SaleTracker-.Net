@@ -9,6 +9,8 @@ namespace SaleTracker.Models
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
 

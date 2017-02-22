@@ -93,7 +93,7 @@ namespace SaleTracker.Controllers
 
             }
 
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 return View();
             }
@@ -117,7 +117,7 @@ namespace SaleTracker.Controllers
                 var task = await _userManager.AddToRoleAsync(user, RoleId);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return View();
             }
