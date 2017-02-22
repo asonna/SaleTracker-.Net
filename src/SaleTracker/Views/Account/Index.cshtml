@@ -1,0 +1,10 @@
+﻿<h1>I'm an index!</h1>
+
+<a href="/Account/Register">Register</a>
+<a href="/Account/Login">Login</a>
+<hr />
+@if (User.Identity.IsAuthenticated)
+{
+    <span>Hello, @User.Identity.Name!</span>
+
+}

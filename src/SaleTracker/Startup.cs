@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using SaleTracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace SaleTracker
 {
@@ -28,10 +29,14 @@ namespace SaleTracker
         {
             services.AddMvc();
 
-            services.AddDbContext<SaleTrackerContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddEntityFramework()
                 .AddEntityFrameworkSqlServer();
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+               .AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,11 +49,13 @@ namespace SaleTracker
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseIdentity();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Account}/{action=Index}/{id?}");
             });
 
             app.Run(async (context) =>
