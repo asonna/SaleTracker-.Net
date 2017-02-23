@@ -12,8 +12,6 @@
     }
 }
 
-<h2>Ajax Test</h2>
-
 <script type="text/javascript">
         $(document).ready(function () {
             $('.display-database-sales-ToUser').submit(function (event) {
@@ -24,7 +22,6 @@
                     data: $(this).serialize(),
                     dataType: 'json',
                     success: function (result) {
-                        console.log(result);
                         var stringResult = '<ul>';
                         if (result.length > 0)
                         {
@@ -46,10 +43,8 @@
 </script>
 
 <body>
-    <h2>Using a form to make a GET request</h2>
+    <h2>Retrieve Your Sales</h2>
     <form action="UserSaleList" class="display-database-sales-ToUser">
-        @*<label for="userSales">How many destinations would you like to see?</label>
-        <input type="number" name="userSales" />*@
         <button type="submit">Return User Sale</button>
     </form>
     <div id="result5"></div>
