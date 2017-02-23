@@ -30,10 +30,6 @@ namespace SaleTracker.Controllers
             var currentUser = await _userManager.FindByIdAsync(userId);
             return Json(_db.Sales.Where(x => x.User.Id == currentUser.Id));
         }
-        public IActionResult Create()
-        {
-            return View();
-        }
 
         [HttpPost]
         public async Task<IActionResult> Create(Sale sale)
@@ -53,9 +49,15 @@ namespace SaleTracker.Controllers
             return Json(userSaleList);
         }
 
-        //public IActionResult Index()
-        //{
-        //    return Content;
-        //}
+        [HttpPost]
+        public async Task<IActionResult> CreateSaleTransaction(int StockId, int SaleQty, float SalePrice, string itemName, float TotalSale)
+        {
+            ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User);
+            Sale Transaction = new Sale(itemName, SalePrice, SaleQty, TotalSale, StockId, user);
+            _db.Sales.Add(Transaction);
+            _db.SaveChanges();
+            return Json(Transaction);
+        }
     }
 }
+//1 855 495 0907

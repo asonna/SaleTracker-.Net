@@ -1,0 +1,117 @@
+﻿@model List<SaleTracker.Models.Stock>
+
+<body>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>Hello @User.Identity.Name!</p>
+        @using (Html.BeginForm("LogOff", "Account"))
+        {
+            <input type="submit" class="btn btn-default" value="Log out" />
+        }
+    }
+
+    <hr />
+
+
+    <h2>Retrieve Your Sales</h2>
+    <form action="UserSaleList" class="display-database-sales-ToUser">
+        <button type="submit">Return User Sale</button>
+    </form>
+    <div id="result5"></div>
+
+    <hr />
+
+    <h2>Retrieve All Inventory</h2>
+    <button id="inventory-button" type="button">Get Inventory</button>
+    <div id="inventory"></div>
+
+    <hr />
+
+    <h2>Make a Sale</h2>
+    <form>
+        <select id="itemSelectBox">
+            @foreach (var stock in Model)
+            {
+                <option value="@stock.StockId">@stock.ItemName  |  $@stock.Price</option>
+            }
+        </select>
+        <label>Quantity</label>
+        <input id="itemQty" style="width: 40px;" type="number" />
+        <button id="sellItem" type="submit">Sell!</button>
+    </form>
+</body>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('.display-database-sales-ToUser').submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("UserSaleList", "Sale")',
+                    type: 'GET',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function (result) {
+                        var stringResult = '<ul>';
+                        if (result.length > 0)
+                        {
+                            for (var i = 0; i < result.length; i++) {
+                            stringResult += '<li>' + result[i].itemName + '</li>';
+                        }
+                        stringResult += '</ul>';
+                        }
+                        else
+                        {
+                            stringResult = "No sales have been made yet!";
+                        }
+
+                        $('#result5').html(stringResult);
+                    }
+                });
+            });
+
+            $('#inventory-button').click(function () {
+                $.ajax({
+                    url: '@Url.Action("RetrieveInventoryInStock", "Stock")',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (result) {
+                        var stringResult = '<ul>';
+                        if (result.length > 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                stringResult += '<li>' + result[i].itemName + " $" + result[i].price + '</li>';
+                            }
+                            stringResult += '</ul>';
+                        }
+                        else {
+                            stringResult = "You have no inventory!";
+                        }
+
+                        $('#inventory').html(stringResult);
+
+                    }
+
+                })
+
+            })
+
+            $('#sellItem').click(function (event) {
+                event.preventDefault();
+                console.log("Test");
+                var itemId = $('#itemSelectBox').val();
+                var qty = $('#itemQty').val();
+                var name = "Apples";
+                var price = 7.00;
+                var totalSale = 14.19;
+                $.ajax({
+                    url: '@Url.Action("CreateSaleTransaction", "SaleAssociate")',
+                    type: 'POST',
+                    data: { StockId: itemId, SaleQty: qty, SalePrice: price, ItemName: name, TotalSale: totalSale },
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result);
+                    },
+                    error: function (exception) { console.log(exception); }
+                })
+            })
+        });
+</script>

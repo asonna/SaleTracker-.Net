@@ -8,9 +8,10 @@ using SaleTracker.Models;
 namespace SaleTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170223181852_addTotalSaleColumn")]
+    partial class addTotalSaleColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -182,8 +183,6 @@ namespace SaleTracker.Migrations
                     b.Property<float>("SalePrice");
 
                     b.Property<int>("SaleQty");
-
-                    b.Property<int>("StockId");
 
                     b.Property<float>("TotalSale");
 
