@@ -50,14 +50,24 @@ namespace SaleTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSaleTransaction(int StockId, int SaleQty, float SalePrice, string itemName, float TotalSale)
+        public async Task<IActionResult> CreateSaleTransaction(int StockId, int SaleQty)
         {
+            var stockItem = _db.Stocks.FirstOrDefault(s => s.StockId == StockId);
+            var totalSale = stockItem.Price * SaleQty;
             ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User);
-            Sale Transaction = new Sale(itemName, SalePrice, SaleQty, TotalSale, StockId, user);
+            Sale Transaction = new Sale(stockItem.ItemName, stockItem.Price, SaleQty, totalSale, StockId, user);
             _db.Sales.Add(Transaction);
+            stockItem.Quantity = stockItem.Quantity - SaleQty;
             _db.SaveChanges();
             return Json(Transaction);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStockTransaction(Stock Stock)
+        {
+            _db.Entry(Stock).State = EntityState.Modified;
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
-//1 855 495 0907

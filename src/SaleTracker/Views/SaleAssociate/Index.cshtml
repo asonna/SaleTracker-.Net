@@ -39,6 +39,12 @@
         <input id="itemQty" style="width: 40px;" type="number" />
         <button id="sellItem" type="submit">Sell!</button>
     </form>
+    <div id="saleResult"></div>
+    <hr />
+
+    @*<h2>Update Stock</h2>
+    
+    <div id="saleResult"></div>*@
 </body>
 
 <script type="text/javascript">
@@ -96,21 +102,34 @@
 
             $('#sellItem').click(function (event) {
                 event.preventDefault();
-                console.log("Test");
                 var itemId = $('#itemSelectBox').val();
                 var qty = $('#itemQty').val();
-                var name = "Apples";
-                var price = 7.00;
-                var totalSale = 14.19;
                 $.ajax({
-                    url: '@Url.Action("CreateSaleTransaction", "SaleAssociate")',
+                    url: '@Url.Action("CreateSaleTransaction", "Sale")',
                     type: 'POST',
-                    data: { StockId: itemId, SaleQty: qty, SalePrice: price, ItemName: name, TotalSale: totalSale },
+                    data: { StockId: itemId, SaleQty: qty },
                     dataType: 'json',
                     success: function (result) {
                         console.log(result);
+                        $('#saleResult').html(result.itemName + " is now sold! Price: $" + result.salePrice + " | Qty: " + result.saleQty + " | Grand Total: $" + (result.salePrice * result.saleQty));
                     },
-                    error: function (exception) { console.log(exception); }
+                    error: function (exception) {
+                        $('#saleResult').html("Error: Save Failure");
+                    }
+                })
+
+                $.ajax({
+                    url: '@Url.Action("UpdateStockTransaction", "Stock")',
+                    type: 'POST',
+                    data: { StockId: itemId, Quantity: qty },
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result);
+                        $('#saleResult').html(result.itemName + " is now reduced!" + " | Qty: " + result.quantity + " | Grand Total Price: $" + (result.price * result.quantity) + " | Grand Total Cost: $" + (result.cost * result.quantity));
+                    },
+                    error: function (exception) {
+                        $('#saleResult').html("Error: Save Failure");
+                    }
                 })
             })
         });
